@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search } from 'lucide-react'
 import { Settings } from '@/components/Settings'
+import { NavBar } from '@/components/NavBar'
 import Agents from '@/pages/Agents'
 
 const SUPPORTED_LANGUAGES = ['en', 'zh', 'es', 'ja', 'ko'];
@@ -48,6 +49,11 @@ function App() {
             {/* Logo */}
             <div className="flex items-center">
               <h1 className="text-xl font-semibold text-brand-orange-500">XAIAgent</h1>
+            </div>
+
+            {/* Categories Navigation */}
+            <div className="ml-6">
+              <NavBar />
             </div>
 
             {/* Center Section - Search */}
