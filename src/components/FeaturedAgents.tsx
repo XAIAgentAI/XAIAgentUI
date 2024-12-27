@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useNavigate } from "react-router-dom"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card"
 import { Button } from "../components/ui/button"
 
@@ -47,6 +47,7 @@ const featuredAgents: Agent[] = [
 ]
 
 export function FeaturedAgents() {
+  const navigate = useNavigate();
   return (
     <section className="p-6">
       <h2 className="text-2xl font-bold mb-6">Featured Agents</h2>
@@ -72,8 +73,8 @@ export function FeaturedAgents() {
               <p className="text-neutral-600">{agent.description}</p>
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button variant="outline">Train Agent</Button>
-              <Button>Learn More</Button>
+              <Button variant="outline" onClick={() => navigate('/training')}>Train Agent</Button>
+              <Button onClick={() => navigate(`/agent/${agent.id}`)}>Learn More</Button>
             </CardFooter>
           </Card>
         ))}

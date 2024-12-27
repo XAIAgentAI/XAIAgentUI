@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search } from 'lucide-react'
@@ -6,6 +7,8 @@ import { Settings } from '@/components/Settings'
 import { NavBar } from '@/components/NavBar'
 import Agents from '@/pages/Agents'
 import { FeaturedAgents } from '@/components/FeaturedAgents'
+import { Training } from '@/pages/Training'
+import { AgentDetail } from '@/pages/AgentDetail'
 
 const SUPPORTED_LANGUAGES = ['en', 'zh', 'es', 'ja', 'ko'];
 
@@ -42,8 +45,9 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50">
-      {/* Header */}
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen bg-neutral-50">
+        {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-neutral-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -102,10 +106,15 @@ function App() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        <FeaturedAgents />
-        <Agents />
+        <Routes>
+          <Route path="/" element={<FeaturedAgents />} />
+          <Route path="/agents" element={<Agents />} />
+          <Route path="/training" element={<Training />} />
+          <Route path="/agent/:id" element={<AgentDetail />} />
+        </Routes>
       </main>
-    </div>
+      </div>
+    </BrowserRouter>
   )
 }
 

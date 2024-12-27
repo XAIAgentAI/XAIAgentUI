@@ -1,4 +1,4 @@
-import * as React from "react"
+// No React import needed with automatic JSX runtime
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,7 +10,9 @@ import {
 import { cn } from "@/lib/utils"
 import { Link } from "react-router-dom"
 
-interface NavBarProps {}
+interface NavBarProps {
+  className?: string;
+}
 
 const categories = [
   {
@@ -45,9 +47,9 @@ const categories = [
   },
 ]
 
-export function NavBar({}: NavBarProps): JSX.Element {
+export function NavBar({ className }: NavBarProps): JSX.Element {
   return (
-    <NavigationMenu>
+    <NavigationMenu className={cn(className)}>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger className="bg-transparent text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900">
