@@ -10,9 +10,10 @@ interface AgentDetailDialogProps {
   isOpen: boolean;
   onClose: () => void;
   agent: Agent | null;
+  onStartChat?: () => void;
 }
 
-export function AgentDetailDialog({ isOpen, onClose, agent }: AgentDetailDialogProps) {
+export function AgentDetailDialog({ isOpen, onClose, agent, onStartChat }: AgentDetailDialogProps) {
   if (!agent) return null;
 
   return (
@@ -119,7 +120,10 @@ export function AgentDetailDialog({ isOpen, onClose, agent }: AgentDetailDialogP
         {/* Footer */}
         <DialogFooter>
           <Button  
-            onClick={() => {/* Start chat function */}} 
+            onClick={() => {
+              onClose();
+              onStartChat?.();
+            }} 
             className="w-full bg-orange-500 hover:bg-orange-600 text-white"
           >
             开始聊天

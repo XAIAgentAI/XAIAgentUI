@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input"
 import { Search } from 'lucide-react'
 import { Settings } from '@/components/Settings'
 import Agents from '@/pages/Agents'
+import ChatView from '@/pages/ChatView'
 
 const SUPPORTED_LANGUAGES = ['en', 'zh', 'es', 'ja', 'ko'];
 
 function App() {
+  const [showChat, setShowChat] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
     // Check for saved preference in localStorage
     const savedLanguage = localStorage.getItem('preferredLanguage');
@@ -66,6 +68,7 @@ function App() {
               <Button 
                 variant="secondary"
                 className="hidden sm:flex items-center gap-2 bg-brand-orange-500 text-white hover:bg-brand-orange-600"
+                onClick={() => setShowChat(true)}
               >
                 <span>New Chat</span>
               </Button>
@@ -95,7 +98,11 @@ function App() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        <Agents />
+        {showChat ? (
+          <ChatView onBack={() => setShowChat(false)} />
+        ) : (
+          <Agents onStartChat={() => setShowChat(true)} />
+        )}
       </main>
     </div>
   )

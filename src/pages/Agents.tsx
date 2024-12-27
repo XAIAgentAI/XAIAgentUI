@@ -49,7 +49,11 @@ const CATEGORIES = [
   "Programming"
 ];
 
-export default function Agents() {
+interface AgentsProps {
+  onStartChat?: () => void;
+}
+
+export default function Agents({ onStartChat }: AgentsProps) {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [trainingData, setTrainingData] = useState("");
   const [agentDialogOpen, setAgentDialogOpen] = useState<boolean>(false);
@@ -274,6 +278,7 @@ export default function Agents() {
                   isOpen={agentDialogOpen && selectedAgent?.id === agent.id}
                   onClose={() => setAgentDialogOpen(false)}
                   agent={selectedAgent}
+                  onStartChat={onStartChat}
                 />
               </div>
             </div>
@@ -383,6 +388,7 @@ export default function Agents() {
                       isOpen={agentDialogOpen && selectedAgent?.id === agent.id}
                       onClose={() => setAgentDialogOpen(false)}
                       agent={selectedAgent}
+                      onStartChat={onStartChat}
                     />
                   </div>
                 </div>
