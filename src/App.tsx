@@ -40,41 +40,61 @@ function App() {
   }, []);
 
   return (
-    <div className="flex h-screen bg-brand-orange-50">
-      {/* Sidebar */}
-      <aside className="w-72 bg-brand-orange-500 text-white p-4 flex flex-col h-full">
-        <div className="flex items-center gap-2 mb-6">
-          <h1 className="text-xl font-bold">XAIAgent</h1>
-        </div>
-        
-        {/* New Chat Button */}
-        <Button 
-          variant="secondary" 
-          className="mb-4 w-full bg-white text-brand-orange-500 hover:bg-brand-orange-50 flex items-center gap-2"
-        >
-          <span className="flex-1">New Chat</span>
-        </Button>
+    <div className="flex flex-col min-h-screen bg-neutral-50">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-neutral-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-brand-orange-500">XAIAgent</h1>
+            </div>
 
-        {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-brand-orange-300" size={18} />
-          <Input 
-            placeholder="Search conversations..." 
-            className="w-full pl-8 bg-brand-orange-600/50 border-brand-orange-400 text-white placeholder:text-brand-orange-200"
-          />
-        </div>
+            {/* Center Section - Search */}
+            <div className="flex-1 max-w-2xl mx-4 hidden sm:block">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
+                <Input 
+                  placeholder="Search conversations..." 
+                  className="w-full pl-10 bg-neutral-50 border-neutral-200 text-neutral-900 placeholder:text-neutral-500 focus:border-brand-orange-500 focus:ring-brand-orange-500"
+                />
+              </div>
+            </div>
 
-        <Settings 
-          language={selectedLanguage} 
-          onLanguageChange={(lang) => {
-            setSelectedLanguage(lang);
-            localStorage.setItem('preferredLanguage', lang);
-          }} 
-        />
-      </aside>
+            {/* Right Section - New Chat & Settings */}
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="secondary"
+                className="hidden sm:flex items-center gap-2 bg-brand-orange-500 text-white hover:bg-brand-orange-600"
+              >
+                <span>New Chat</span>
+              </Button>
+
+              <Settings 
+                language={selectedLanguage} 
+                onLanguageChange={(lang) => {
+                  setSelectedLanguage(lang);
+                  localStorage.setItem('preferredLanguage', lang);
+                }} 
+              />
+            </div>
+          </div>
+
+          {/* Mobile Search (visible on small screens) */}
+          <div className="sm:hidden py-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" size={18} />
+              <Input 
+                placeholder="Search conversations..." 
+                className="w-full pl-10 bg-neutral-50 border-neutral-200 text-neutral-900 placeholder:text-neutral-500 focus:border-brand-orange-500 focus:ring-brand-orange-500"
+              />
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-white">
+      <main className="flex-1 overflow-y-auto">
         <Agents />
       </main>
     </div>
