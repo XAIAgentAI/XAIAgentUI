@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Search } from 'lucide-react'
+import { Settings } from '@/components/Settings'
 
 interface SuggestedPrompt {
   title: string;
@@ -11,8 +11,7 @@ interface SuggestedPrompt {
 }
 
 function App() {
-  const [selectedModel, setSelectedModel] = useState('Default Model')
-  const [selectedLanguage, setSelectedLanguage] = useState('English')
+  const [selectedLanguage, setSelectedLanguage] = useState('en') // Default to English
   
   const suggestedPrompts: SuggestedPrompt[] = [
     { title: 'Grammar check', description: 'rewrite it for better readability' },
@@ -46,47 +45,7 @@ function App() {
           />
         </div>
 
-        {/* Model Selection */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Model</label>
-          <Select value={selectedModel} onValueChange={setSelectedModel}>
-            <SelectTrigger className="w-full bg-brand-orange-600 text-white border-brand-orange-400">
-              <SelectValue placeholder="Select a model" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Default Model">Default Model</SelectItem>
-              <SelectItem value="GPT-4">GPT-4</SelectItem>
-              <SelectItem value="Claude">Claude</SelectItem>
-              <SelectItem value="Llama-2">Llama-2</SelectItem>
-              <SelectItem value="Mixtral">Mixtral</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Language Selection */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">Language</label>
-          <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-            <SelectTrigger className="w-full bg-brand-orange-600 text-white border-brand-orange-400">
-              <SelectValue placeholder="Select a language" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="English">English</SelectItem>
-              <SelectItem value="Chinese">Chinese</SelectItem>
-              <SelectItem value="Spanish">Spanish</SelectItem>
-              <SelectItem value="Japanese">Japanese</SelectItem>
-              <SelectItem value="Korean">Korean</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Settings Button */}
-        <Button 
-          variant="outline" 
-          className="mt-auto w-full bg-brand-orange-600 text-white hover:bg-brand-orange-700 border-brand-orange-400"
-        >
-          Settings
-        </Button>
+        <Settings language={selectedLanguage} onLanguageChange={setSelectedLanguage} />
       </aside>
 
       {/* Main Content */}
