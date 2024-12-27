@@ -5,6 +5,7 @@ import { Search } from 'lucide-react'
 import { Settings } from '@/components/Settings'
 import { NavBar } from '@/components/NavBar'
 import Agents from '@/pages/Agents'
+import { FeaturedAgents } from '@/components/FeaturedAgents'
 
 const SUPPORTED_LANGUAGES = ['en', 'zh', 'es', 'ja', 'ko'];
 
@@ -101,6 +102,7 @@ function App() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
+        <FeaturedAgents />
         <Agents />
       </main>
     </div>
