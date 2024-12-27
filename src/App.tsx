@@ -1,24 +1,43 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Search } from 'lucide-react'
 import { Settings } from '@/components/Settings'
+import Agents from '@/pages/Agents'
 
-interface SuggestedPrompt {
-  title: string;
-  description: string;
-}
+const SUPPORTED_LANGUAGES = ['en', 'zh', 'es', 'ja', 'ko'];
 
 function App() {
-  const [selectedLanguage, setSelectedLanguage] = useState('en') // Default to English
-  
-  const suggestedPrompts: SuggestedPrompt[] = [
-    { title: 'Grammar check', description: 'rewrite it for better readability' },
-    { title: 'Tell me a fun fact', description: 'about the Roman Empire' },
-    { title: 'Help me study', description: 'vocabulary for a college entrance exam' },
-    { title: 'Overcome procrastination', description: 'give me tips' },
-  ]
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    // Check for saved preference in localStorage
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    if (savedLanguage && SUPPORTED_LANGUAGES.includes(savedLanguage)) {
+      return savedLanguage;
+    }
+    return 'en'; // Default fallback
+  });
+
+  // Detect browser language on mount
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    if (!savedLanguage) {
+      // For testing: allow override of browser language
+      const testLang = localStorage.getItem('testBrowserLanguage');
+      // Get browser language and normalize to just the language code
+      const browserLang = (testLang || navigator.language).split('-')[0].toLowerCase();
+      console.log('Detected browser language:', browserLang);
+      
+      if (SUPPORTED_LANGUAGES.includes(browserLang)) {
+        console.log('Setting language to:', browserLang);
+        setSelectedLanguage(browserLang);
+        localStorage.setItem('preferredLanguage', browserLang);
+      } else {
+        console.log('Browser language not supported, defaulting to en');
+      }
+    } else {
+      console.log('Using saved language:', savedLanguage);
+    }
+  }, []);
 
   return (
     <div className="flex h-screen bg-brand-orange-50">
@@ -45,45 +64,18 @@ function App() {
           />
         </div>
 
-        <Settings language={selectedLanguage} onLanguageChange={setSelectedLanguage} />
+        <Settings 
+          language={selectedLanguage} 
+          onLanguageChange={(lang) => {
+            setSelectedLanguage(lang);
+            localStorage.setItem('preferredLanguage', lang);
+          }} 
+        />
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col bg-white">
-        {/* Chat History */}
-        <div className="flex-1 p-4 overflow-y-auto">
-          {/* Initial State with Suggested Prompts */}
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-lg font-semibold text-gray-700 mb-4">Suggested</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {suggestedPrompts.map((prompt, index) => (
-                <button
-                  key={index}
-                  className="p-4 text-left rounded-lg border border-brand-orange-200 hover:border-brand-orange-500 transition-colors group"
-                >
-                  <h3 className="font-medium text-gray-900 group-hover:text-brand-orange-500">{prompt.title}</h3>
-                  <p className="text-sm text-gray-500">{prompt.description}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Message Input */}
-        <div className="border-t border-brand-orange-200 p-4">
-          <div className="relative">
-            <Textarea
-              className="w-full pr-24 border-brand-orange-200 focus:border-brand-orange-500 focus:ring-brand-orange-200 resize-none"
-              placeholder="Type your message..."
-              rows={3}
-            />
-            <Button 
-              className="absolute right-2 bottom-2 bg-brand-orange-500 text-white hover:bg-brand-orange-600"
-            >
-              Send
-            </Button>
-          </div>
-        </div>
+      <main className="flex-1 overflow-y-auto bg-white">
+        <Agents />
       </main>
     </div>
   )
