@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AgentDetailDialog } from "../components/AgentDetailDialog";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +18,7 @@ interface CryptoData {
   marketLiquidity: number;
 }
 
-interface Agent {
+export interface Agent {
   id: string;
   name: string;
   creator: {
@@ -28,6 +29,14 @@ interface Agent {
   category?: string;
   featured?: boolean;
   cryptoData: CryptoData;
+  rating: number;
+  ratingCount: number;
+  ranking: string;
+  usageStats: string;
+  examplePrompts: string[];
+  features: string[];
+  ratingDistribution?: number[];
+  relatedAgents?: Agent[];
 }
 
 const CATEGORIES = [
@@ -43,6 +52,7 @@ const CATEGORIES = [
 export default function Agents() {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [trainingData, setTrainingData] = useState("");
+  const [agentDialogOpen, setAgentDialogOpen] = useState<boolean>(false);
   // Placeholder data simulating user-created X Agents
   const agents: Agent[] = [
     {
@@ -60,7 +70,24 @@ export default function Agents() {
         priceChange24h: 5.23,
         currentPrice: 0.0458,
         marketLiquidity: 2500000
-      }
+      },
+      rating: 4.9,
+      ratingCount: 12500,
+      ranking: "#1 in Data Analysis",
+      usageStats: "15M+",
+      examplePrompts: [
+        "Analyze market trends for crypto tokens",
+        "Predict price movements based on historical data",
+        "Generate trading strategies",
+        "Analyze sentiment from social media data"
+      ],
+      features: [
+        "Real-time market analysis",
+        "Advanced trading algorithms",
+        "Risk assessment tools",
+        "Sentiment analysis"
+      ],
+      ratingDistribution: [70, 20, 5, 3, 2]
     },
     {
       id: "2",
@@ -77,7 +104,24 @@ export default function Agents() {
         priceChange24h: -2.15,
         currentPrice: 0.0892,
         marketLiquidity: 3750000
-      }
+      },
+      rating: 4.8,
+      ratingCount: 8900,
+      ranking: "#1 in Programming",
+      usageStats: "10M+",
+      examplePrompts: [
+        "Debug this Python code",
+        "Explain this React component",
+        "Optimize this SQL query",
+        "Suggest code improvements"
+      ],
+      features: [
+        "Multi-language support",
+        "Code optimization",
+        "Best practices suggestions",
+        "Real-time debugging"
+      ],
+      ratingDistribution: [65, 25, 5, 3, 2]
     },
     {
       id: "3",
@@ -94,7 +138,24 @@ export default function Agents() {
         priceChange24h: 8.45,
         currentPrice: 0.0675,
         marketLiquidity: 1850000
-      }
+      },
+      rating: 4.7,
+      ratingCount: 7500,
+      ranking: "#1 in Content Writing",
+      usageStats: "8M+",
+      examplePrompts: [
+        "Write a blog post about AI",
+        "Create social media content",
+        "Generate SEO-optimized headlines",
+        "Draft marketing copy"
+      ],
+      features: [
+        "SEO optimization",
+        "Multi-format content",
+        "Brand voice matching",
+        "Engagement analytics"
+      ],
+      ratingDistribution: [60, 25, 10, 3, 2]
     },
     // Add more placeholder agents as needed
   ];
@@ -202,10 +263,18 @@ export default function Agents() {
                 </Dialog>
                 <Button
                   variant="outline"
-                  onClick={() => console.log(`View details for ${agent.name}`)}
+                  onClick={() => {
+                    setSelectedAgent(agent);
+                    setAgentDialogOpen(true);
+                  }}
                 >
                   Learn More
                 </Button>
+                <AgentDetailDialog
+                  isOpen={agentDialogOpen && selectedAgent?.id === agent.id}
+                  onClose={() => setAgentDialogOpen(false)}
+                  agent={selectedAgent}
+                />
               </div>
             </div>
           ))}
@@ -303,10 +372,18 @@ export default function Agents() {
                     </Dialog>
                     <Button
                       variant="outline"
-                      onClick={() => console.log(`View details for ${agent.name}`)}
+                      onClick={() => {
+                        setSelectedAgent(agent);
+                        setAgentDialogOpen(true);
+                      }}
                     >
                       Learn More
                     </Button>
+                    <AgentDetailDialog
+                      isOpen={agentDialogOpen && selectedAgent?.id === agent.id}
+                      onClose={() => setAgentDialogOpen(false)}
+                      agent={selectedAgent}
+                    />
                   </div>
                 </div>
               ))}
