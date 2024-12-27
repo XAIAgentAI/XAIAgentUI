@@ -102,13 +102,13 @@ export default function Agents() {
   const featuredAgents = agents.filter(agent => agent.featured);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto bg-gradient-to-b from-brand-orange-50/50 to-white">
       {/* Categories Bar */}
-      <div className="flex overflow-x-auto space-x-4 mb-8 pb-2">
+      <div className="flex overflow-x-auto space-x-4 mb-8 pb-2 border-b border-brand-orange-100">
         {CATEGORIES.map((category) => (
           <button
             key={category}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-orange-600 whitespace-nowrap"
+            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-brand-orange-500 whitespace-nowrap border-b-2 border-transparent hover:border-brand-orange-500 transition-colors duration-200"
           >
             {category}
           </button>
@@ -117,12 +117,15 @@ export default function Agents() {
 
       {/* Featured Section */}
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold mb-6">Featured</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-gray-900 flex items-center">
+          <span className="mr-2">Featured</span>
+          <div className="h-1 w-16 bg-brand-orange-500 rounded"></div>
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredAgents.map(agent => (
             <div
               key={agent.id}
-              className="border rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition-shadow duration-200"
+              className="border border-brand-orange-100 rounded-lg p-6 bg-white shadow-sm hover:shadow-lg hover:border-brand-orange-200 transition-all duration-200"
             >
               <h3 className="text-xl font-semibold mb-2">{agent.name}</h3>
               <div className="flex items-center justify-between mb-4">
@@ -218,12 +221,15 @@ export default function Agents() {
 
         return (
           <div key={category} className="mb-12">
-            <h2 className="text-2xl font-semibold mb-6">{category}</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-gray-900 flex items-center">
+              <span className="mr-2">{category}</span>
+              <div className="h-1 w-16 bg-brand-orange-500 rounded"></div>
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categoryAgents.map(agent => (
                 <div
                   key={agent.id}
-                  className="border rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition-shadow duration-200"
+                  className="border border-brand-orange-100 rounded-lg p-6 bg-white shadow-sm hover:shadow-lg hover:border-brand-orange-200 transition-all duration-200"
                 >
                   <h3 className="text-xl font-semibold mb-2">{agent.name}</h3>
                   <div className="flex items-center justify-between mb-4">
