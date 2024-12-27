@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -22,9 +21,11 @@ interface Message {
 interface ChatDetailDialogProps {
   agentId: string;
   agentName: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export function ChatDetailDialog({ agentId, agentName }: ChatDetailDialogProps) {
+export function ChatDetailDialog({ agentId, agentName, isOpen, onClose }: ChatDetailDialogProps) {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [newMessage, setNewMessage] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
@@ -40,7 +41,8 @@ export function ChatDetailDialog({ agentId, agentName }: ChatDetailDialogProps) 
         setMessages(data.messages);
       } catch (err) {
         console.error('Failed to fetch messages:', err);
-        setError('Failed to load chat history');
+        // Don't show error initially
+        // setError('Failed to load chat history');
       }
     };
     fetchMessages();
@@ -103,21 +105,24 @@ export function ChatDetailDialog({ agentId, agentName }: ChatDetailDialogProps) 
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="w-full text-xs sm:text-sm bg-brand-orange-500 text-white hover:bg-brand-orange-600">
-          Chat with Agent
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="w-[90vw] max-w-[600px] h-[80vh] sm:h-[600px] flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="text-lg sm:text-xl font-semibold text-brand-orange-500">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="w-full h-screen max-w-none m-0 p-0 rounded-none border-none bg-white">
+        <DialogHeader className="px-4 py-3 bg-white flex items-center justify-between">
+          <DialogTitle className="text-lg">
             Chat with {agentName}
           </DialogTitle>
+          <button
+            onClick={onClose}
+            className="rounded-full p-2 hover:bg-gray-100 transition-colors"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
         </DialogHeader>
         
         <ScrollArea className="flex-1">
-          <div className="space-y-6 p-4">
+          <div className="max-w-4xl mx-auto space-y-4 p-6">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -127,26 +132,26 @@ export function ChatDetailDialog({ agentId, agentName }: ChatDetailDialogProps) 
               >
                 <div className="flex items-end gap-2">
                   {message.role === 'assistant' && (
-                    <div className="w-6 h-6 rounded-full bg-brand-orange-500 flex items-center justify-center text-white text-xs">
+                    <div className="w-8 h-8 rounded-full bg-brand-orange-500 flex items-center justify-center text-white text-sm">
                       AI
                     </div>
                   )}
                   <div
-                    className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
+                    className={`max-w-[80%] rounded-2xl px-6 py-3 text-base ${
                       message.role === 'user'
                         ? 'bg-brand-orange-500 text-white'
-                        : 'bg-neutral-100 text-neutral-800'
+                        : 'bg-gray-100 text-gray-900'
                     }`}
                   >
                     {message.content}
                   </div>
                   {message.role === 'user' && (
-                    <div className="w-6 h-6 rounded-full bg-neutral-300 flex items-center justify-center text-white text-xs">
+                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm">
                       U
                     </div>
                   )}
                 </div>
-                <span className="text-xs text-neutral-500 mt-1 px-8">
+                <span className="text-xs text-gray-500 mt-1 px-8">
                   {new Date(message.timestamp).toLocaleTimeString([], { 
                     hour: '2-digit', 
                     minute: '2-digit'
@@ -169,37 +174,39 @@ export function ChatDetailDialog({ agentId, agentName }: ChatDetailDialogProps) 
         </ScrollArea>
 
         {error && (
-          <div className="px-4 text-xs sm:text-sm text-red-500">
+          <div className="px-4 py-2 text-xs sm:text-sm text-gray-500 text-center">
             {error}
           </div>
         )}
 
-        <DialogFooter className="p-4 border-t">
-          <div className="flex w-full gap-2">
-            <Input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 text-xs sm:text-sm"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              disabled={isLoading}
-            />
-            <Button
-              onClick={handleSendMessage}
-              disabled={isLoading || !newMessage.trim()}
-              className="bg-brand-orange-500 text-white hover:bg-brand-orange-600"
-            >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-            </Button>
+        <DialogFooter className="p-4 border-t bg-white sticky bottom-0">
+          <div className="max-w-4xl mx-auto w-full">
+            <div className="flex w-full gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Enter message..."
+                className="flex-1 text-base py-4 px-4 rounded-2xl border-gray-200 focus:border-brand-orange-500 focus:ring-brand-orange-500"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                disabled={isLoading}
+              />
+              <Button
+                onClick={handleSendMessage}
+                disabled={isLoading || !newMessage.trim()}
+                className="bg-brand-orange-400 text-white hover:bg-brand-orange-500 rounded-2xl p-3 min-w-[48px] h-[48px] flex items-center justify-center"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
           </div>
         </DialogFooter>
       </DialogContent>

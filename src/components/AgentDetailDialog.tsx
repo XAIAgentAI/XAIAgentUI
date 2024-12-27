@@ -4,18 +4,16 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import { BadgeCheck, Star } from 'lucide-react';
-import * as React from 'react';
-import { ChatDetailDialog } from './ChatDetailDialog';
 import type { Agent } from '../pages/Agents';
 
 interface AgentDetailDialogProps {
   isOpen: boolean;
   onClose: () => void;
   agent: Agent | null;
+  onStartChat: () => void;
 }
 
-export function AgentDetailDialog({ isOpen, onClose, agent }: AgentDetailDialogProps) {
-  const [showChat, setShowChat] = React.useState(false);
+export function AgentDetailDialog({ isOpen, onClose, agent, onStartChat }: AgentDetailDialogProps) {
   if (!agent) return null;
 
   return (
@@ -125,17 +123,11 @@ export function AgentDetailDialog({ isOpen, onClose, agent }: AgentDetailDialogP
         {/* Footer */}
         <DialogFooter>
           <Button  
-            onClick={() => setShowChat(true)} 
+            onClick={onStartChat} 
             className="w-full bg-orange-500 hover:bg-orange-600 text-white text-lg py-6"
           >
             开始聊天
           </Button>
-          {showChat && (
-            <ChatDetailDialog
-              agentId={agent.id}
-              agentName="image generator"
-            />
-          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

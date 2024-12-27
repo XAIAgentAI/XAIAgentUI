@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AgentDetailDialog } from "../components/AgentDetailDialog";
+import { ChatDetailDialog } from "../components/ChatDetailDialog";
 import {
   Dialog,
   DialogContent,
@@ -53,6 +54,7 @@ export default function Agents() {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [trainingData, setTrainingData] = useState("");
   const [agentDialogOpen, setAgentDialogOpen] = useState<boolean>(false);
+  const [showChat, setShowChat] = useState<boolean>(false);
   // Placeholder data simulating user-created X Agents
   const agents: Agent[] = [
     {
@@ -274,7 +276,16 @@ export default function Agents() {
                   isOpen={agentDialogOpen && selectedAgent?.id === agent.id}
                   onClose={() => setAgentDialogOpen(false)}
                   agent={selectedAgent}
+                  onStartChat={() => setShowChat(true)}
                 />
+                {showChat && selectedAgent && (
+                  <ChatDetailDialog
+                    isOpen={showChat}
+                    onClose={() => setShowChat(false)}
+                    agentId={selectedAgent.id}
+                    agentName={selectedAgent.name}
+                  />
+                )}
               </div>
             </div>
           ))}
@@ -383,7 +394,16 @@ export default function Agents() {
                       isOpen={agentDialogOpen && selectedAgent?.id === agent.id}
                       onClose={() => setAgentDialogOpen(false)}
                       agent={selectedAgent}
+                      onStartChat={() => setShowChat(true)}
                     />
+                    {showChat && selectedAgent && (
+                      <ChatDetailDialog
+                        isOpen={showChat}
+                        onClose={() => setShowChat(false)}
+                        agentId={selectedAgent.id}
+                        agentName={selectedAgent.name}
+                      />
+                    )}
                   </div>
                 </div>
               ))}

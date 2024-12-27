@@ -1,11 +1,13 @@
 import { useParams } from 'react-router-dom';
 import { AgentDetailDialog } from '../components/AgentDetailDialog';
+import { ChatDetailDialog } from '../components/ChatDetailDialog';
 import { useEffect, useState } from 'react';
 import type { Agent } from './Agents';
 
 export function AgentDetail() {
   const { id } = useParams();
   const [agent, setAgent] = useState<Agent | null>(null);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     // Mock data for testing UI
@@ -70,10 +72,21 @@ export function AgentDetail() {
   }
 
   return (
-    <AgentDetailDialog
-      isOpen={true}
-      onClose={() => {}}
-      agent={agent}
-    />
+    <>
+      <AgentDetailDialog
+        isOpen={!showChat}
+        onClose={() => {}}
+        agent={agent}
+        onStartChat={() => setShowChat(true)}
+      />
+      {showChat && (
+        <ChatDetailDialog
+          isOpen={true}
+          onClose={() => setShowChat(false)}
+          agentId={agent.id}
+          agentName={agent.name}
+        />
+      )}
+    </>
   );
 }
