@@ -4,16 +4,17 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import { BadgeCheck, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import type { Agent } from '../pages/Agents';
 
 interface AgentDetailDialogProps {
   isOpen: boolean;
   onClose: () => void;
   agent: Agent | null;
-  onStartChat: () => void;
 }
 
-export function AgentDetailDialog({ isOpen, onClose, agent, onStartChat }: AgentDetailDialogProps) {
+export function AgentDetailDialog({ isOpen, onClose, agent }: AgentDetailDialogProps) {
+  const navigate = useNavigate();
   if (!agent) return null;
 
   return (
@@ -123,7 +124,10 @@ export function AgentDetailDialog({ isOpen, onClose, agent, onStartChat }: Agent
         {/* Footer */}
         <DialogFooter>
           <Button  
-            onClick={onStartChat} 
+            onClick={() => {
+              onClose();
+              navigate(`/chat/${agent.id}`);
+            }} 
             className="w-full bg-orange-500 hover:bg-orange-600 text-white text-lg py-6"
           >
             开始聊天
