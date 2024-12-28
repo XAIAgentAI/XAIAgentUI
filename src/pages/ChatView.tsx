@@ -1,0 +1,194 @@
+import * as React from "react";
+import { useParams } from "react-router-dom";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Loader2, Send } from "lucide-react";
+
+interface Message {
+  id: string;
+  content: string;
+  role: 'user' | 'assistant';
+  timestamp: Date;
+}
+
+export function ChatView() {
+  const { agentId } = useParams();
+  const [messages, setMessages] = React.useState<Message[]>([]);
+  const [newMessage, setNewMessage] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isTyping, setIsTyping] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(`/api/chat/${agentId}/messages`);
+        if (!response.ok) throw new Error('Failed to fetch messages');
+        const data = await response.json();
+        setMessages(data.messages);
+      } catch (err) {
+        console.error('Failed to fetch messages:', err);
+      }
+    };
+    fetchMessages();
+  }, [agentId]);
+
+  const handleSendMessage = async () => {
+    if (!newMessage.trim()) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Add optimistic update for user message
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        content: newMessage,
+        role: 'user',
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, userMessage]);
+      setNewMessage('');
+      setIsTyping(true);
+
+      const response = await fetch(`/api/chat/${agentId}/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: newMessage }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to send message');
+      }
+
+      const data = await response.json();
+      setIsTyping(false);
+      setMessages(prev => [...prev, {
+        ...data.message,
+        timestamp: new Date(),
+      }]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send message');
+    } finally {
+      setIsLoading(false);
+      setIsTyping(false);
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-white">
+      {/* Left Column (Sidebar) */}
+      <div className="hidden md:block w-64 border-r border-gray-200">
+        {/* Sidebar content will be implemented in step 002 */}
+      </div>
+      
+      {/* Mobile Sidebar */}
+      <Sheet>
+        <SheetContent side="left" className="w-64">
+          {/* Mobile sidebar content will be implemented in step 002 */}
+        </SheetContent>
+      </Sheet>
+
+      {/* Right Column (Main chat content) */}
+      <div className="flex-1 flex flex-col">
+        <div className="p-4 border-b">
+          <h1 className="text-lg font-medium">Chat with Agent</h1>
+        </div>
+
+        <ScrollArea className="flex-1">
+          <div className="max-w-4xl mx-auto space-y-4 p-6">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex flex-col ${
+                  message.role === 'user' ? 'items-end' : 'items-start'
+                }`}
+              >
+                <div className="flex items-end gap-2">
+                  {message.role === 'assistant' && (
+                    <div className="w-8 h-8 rounded-full bg-brand-orange-500 flex items-center justify-center text-white text-sm">
+                      AI
+                    </div>
+                  )}
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-6 py-3 text-base ${
+                      message.role === 'user'
+                        ? 'bg-brand-orange-500 text-white'
+                        : 'bg-gray-100 text-gray-900'
+                    }`}
+                  >
+                    {message.content}
+                  </div>
+                  {message.role === 'user' && (
+                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white text-sm">
+                      U
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs text-gray-500 mt-1 px-8">
+                  {new Date(message.timestamp).toLocaleTimeString([], { 
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </span>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="flex items-start gap-2">
+                <div className="w-6 h-6 rounded-full bg-brand-orange-500 flex items-center justify-center text-white text-xs">
+                  AI
+                </div>
+                <div className="flex items-center gap-1 text-neutral-500 text-sm">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>AI is thinking...</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </ScrollArea>
+
+        {error && (
+          <div className="px-4 py-2 text-xs sm:text-sm text-gray-500 text-center">
+            {error}
+          </div>
+        )}
+
+        <div className="p-4 border-t bg-white">
+          <div className="max-w-4xl mx-auto w-full">
+            <div className="flex w-full gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Enter message..."
+                className="flex-1 text-base py-4 px-4 rounded-2xl border-gray-200 focus:border-brand-orange-500 focus:ring-brand-orange-500"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
+                disabled={isLoading}
+              />
+              <Button
+                onClick={handleSendMessage}
+                disabled={isLoading || !newMessage.trim()}
+                className="bg-brand-orange-400 text-white hover:bg-brand-orange-500 rounded-2xl p-3 min-w-[48px] h-[48px] flex items-center justify-center"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

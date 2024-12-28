@@ -9,6 +9,7 @@ import Agents from '@/pages/Agents'
 import { FeaturedAgents } from '@/components/FeaturedAgents'
 import { Training } from '@/pages/Training'
 import { AgentDetail } from '@/pages/AgentDetail'
+import { ChatView } from '@/pages/ChatView'
 
 const SUPPORTED_LANGUAGES = ['en', 'zh', 'es', 'ja', 'ko'];
 
@@ -111,6 +112,7 @@ function App() {
           <Route path="/agents" element={<Agents />} />
           <Route path="/training" element={<Training />} />
           <Route path="/agent/:id" element={<AgentDetail />} />
+          <Route path="/chat/:agentId" element={<ChatView />} />
         </Routes>
       </main>
       </div>
