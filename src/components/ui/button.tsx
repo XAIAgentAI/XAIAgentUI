@@ -40,6 +40,15 @@ export interface ButtonProps
   asChild?: boolean
 }
 
+/**
+ * A reusable button component that supports various styles and sizes.
+ * Can be rendered as a different element via asChild prop.
+ * 
+ * @param className - Additional CSS classes to apply
+ * @param variant - Visual style variant (default, destructive, outline, secondary, ghost, link)
+ * @param size - Size variant (default, sm, lg, icon)
+ * @param asChild - If true, renders as child component instead of button
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
